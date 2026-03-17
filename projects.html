@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects — TAMPU Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root { --gold:#c9a96e; --gold2:#e8d5a3; --dark:#0a0a0f; --deep:#0d0d14; --mist:rgba(201,169,110,0.07); --ivory:#f4f0e8; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Montserrat',sans-serif; background:var(--dark); color:var(--ivory); overflow-x:hidden; }
+    ::-webkit-scrollbar{width:3px;} ::-webkit-scrollbar-track{background:var(--dark);} ::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px;}
+
+    nav { position:fixed; top:0; left:0; right:0; z-index:200; display:flex; align-items:center; justify-content:space-between; padding:24px 52px; transition:background .4s, padding .3s; }
+    nav.scrolled { background:rgba(10,10,15,0.95); backdrop-filter:blur(20px); padding:14px 52px; border-bottom:1px solid rgba(201,169,110,0.1); }
+    .nav-logo { display:flex; align-items:center; gap:10px; font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.05rem; letter-spacing:.28em; text-transform:uppercase; color:var(--ivory); text-decoration:none; }
+    .nav-logo-mark { width:32px; height:32px; border-radius:50%; background:rgba(201,169,110,0.15); border:1px solid rgba(201,169,110,0.3); display:flex; align-items:center; justify-content:center; }
+    .nav-logo span { color:var(--gold); }
+    .burger { background:transparent; border:1px solid rgba(201,169,110,.28); border-radius:3px; width:44px; height:34px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; transition:border-color .3s; }
+    .burger:hover, .burger.open { border-color:var(--gold); }
+    .burger span { display:block; width:18px; height:1px; background:var(--ivory); border-radius:1px; transition:all .35s cubic-bezier(.16,1,.3,1); transform-origin:center; }
+    .burger.open span:nth-child(1){transform:translateY(6px) rotate(45deg);} .burger.open span:nth-child(2){opacity:0;transform:scaleX(0);} .burger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+    .nav-overlay { position:fixed; inset:0; z-index:190; background:rgba(8,8,13,.97); backdrop-filter:blur(24px); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .4s; }
+    .nav-overlay.open{opacity:1;pointer-events:all;}
+    .nav-links{list-style:none;text-align:center;}
+    .nav-links a { display:block; font-family:'Cormorant Garamond',serif; font-weight:300; font-style:italic; font-size:clamp(2.5rem,6vw,5rem); color:rgba(244,240,232,.3); text-decoration:none; line-height:1.3; transform:translateY(55px); opacity:0; transition:color .25s, transform .55s cubic-bezier(.16,1,.3,1), opacity .55s; }
+    .nav-links a:hover{color:var(--ivory);}
+    .nav-overlay.open .nav-links li:nth-child(1) a{transform:translateY(0);opacity:1;transition-delay:.06s;}
+    .nav-overlay.open .nav-links li:nth-child(2) a{transform:translateY(0);opacity:1;transition-delay:.12s;}
+    .nav-overlay.open .nav-links li:nth-child(3) a{transform:translateY(0);opacity:1;transition-delay:.18s;}
+    .nav-overlay.open .nav-links li:nth-child(4) a{transform:translateY(0);opacity:1;transition-delay:.24s;}
+    .nav-overlay.open .nav-links li:nth-child(5) a{transform:translateY(0);opacity:1;transition-delay:.30s;}
+    .nav-overlay.open .nav-links li:nth-child(6) a{transform:translateY(0);opacity:1;transition-delay:.36s;}
+
+    .page-hero { position:relative; height:55vh; display:flex; align-items:flex-end; padding:80px 52px; overflow:hidden; }
+    .page-hero-bg { position:absolute; inset:0; background:linear-gradient(135deg,#071a0e 0%,#0d2418 40%,#091510 100%); }
+    .page-hero::after { content:''; position:absolute; inset:0; background:linear-gradient(to top,rgba(10,10,15,1) 0%,transparent 60%); }
+    .page-hero-content { position:relative; z-index:2; }
+    .page-eyebrow { font-weight:200; font-size:.6rem; letter-spacing:.4em; text-transform:uppercase; color:var(--gold); margin-bottom:16px; }
+    .page-title { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(3rem,7vw,6rem); line-height:.95; color:var(--ivory); }
+    .page-title em { font-style:italic; color:rgba(244,240,232,.45); }
+
+    /* PROJECT CARDS FULL */
+    .projects-section { background:var(--dark); padding:100px 52px; }
+    .projects-filter { display:flex; gap:24px; margin-bottom:56px; flex-wrap:wrap; }
+    .filter-btn { font-weight:200; font-size:.62rem; letter-spacing:.28em; text-transform:uppercase; padding:10px 22px; border:1px solid rgba(201,169,110,.18); background:transparent; color:rgba(244,240,232,.4); cursor:pointer; border-radius:1px; transition:all .3s; }
+    .filter-btn:hover, .filter-btn.active { border-color:var(--gold); color:var(--gold); }
+    .projects-full-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:3px; }
+
+    .proj-full { position:relative; display:grid; grid-template-columns:1fr 1fr; min-height:380px; overflow:hidden; border:1px solid rgba(201,169,110,.06); transition:border-color .3s; }
+    .proj-full:hover { border-color:rgba(201,169,110,.2); }
+    .proj-full-visual { position:relative; overflow:hidden; }
+    .proj-full-visual svg { position:absolute; inset:0; width:100%; height:100%; }
+    .proj-full-body { padding:44px 36px; display:flex; flex-direction:column; justify-content:center; background:var(--deep); }
+    .p-num { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:4rem; color:rgba(201,169,110,0.08); line-height:1; margin-bottom:8px; }
+    .p-tag { font-weight:200; font-size:.58rem; letter-spacing:.35em; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+    .p-title { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.8rem; color:var(--ivory); line-height:1.2; margin-bottom:16px; }
+    .p-title em { font-style:italic; color:rgba(244,240,232,.45); }
+    .p-body { font-weight:300; font-size:.78rem; line-height:1.95; color:rgba(244,240,232,.42); margin-bottom:24px; }
+    .p-stats { display:flex; gap:28px; margin-bottom:28px; }
+    .p-stat-item .val { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1.6rem; color:var(--gold); line-height:1; }
+    .p-stat-item .lbl { font-weight:200; font-size:.58rem; letter-spacing:.16em; text-transform:uppercase; color:rgba(244,240,232,.3); margin-top:4px; }
+    .p-link { display:inline-flex; align-items:center; gap:10px; font-weight:200; font-size:.62rem; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); text-decoration:none; border-bottom:1px solid rgba(201,169,110,.22); padding-bottom:4px; transition:border-color .3s, gap .3s; }
+    .p-link:hover { border-color:var(--gold); gap:16px; }
+
+    /* Alternate layout */
+    .proj-full:nth-child(even) { direction:rtl; }
+    .proj-full:nth-child(even) > * { direction:ltr; }
+
+    /* IMPACT BAR */
+    .impact-bar { background:var(--deep); padding:80px 52px; display:grid; grid-template-columns:repeat(4,1fr); gap:1px; border-top:1px solid rgba(201,169,110,.06); }
+    .impact-stat { padding:40px 28px; text-align:center; border-right:1px solid rgba(201,169,110,.06); }
+    .impact-stat:last-child { border-right:none; }
+    .impact-stat .big { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:3.5rem; color:var(--gold); line-height:1; margin-bottom:10px; }
+    .impact-stat .desc { font-weight:200; font-size:.64rem; letter-spacing:.2em; text-transform:uppercase; color:rgba(244,240,232,.3); }
+
+    /* CTA */
+    .projects-cta { background:var(--dark); padding:100px 52px; text-align:center; border-top:1px solid rgba(201,169,110,.06); }
+    .cta-title { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(2rem,5vw,4.5rem); line-height:1.05; color:var(--ivory); margin-bottom:20px; }
+    .cta-title em { font-style:italic; color:var(--gold); }
+    .cta-sub { font-weight:200; font-size:.82rem; color:rgba(244,240,232,.36); max-width:380px; margin:0 auto 40px; line-height:1.85; }
+    .btn-p { font-weight:300; font-size:.68rem; letter-spacing:.3em; text-transform:uppercase; color:var(--dark); background:var(--gold); padding:16px 38px; text-decoration:none; border-radius:1px; transition:background .3s, transform .2s; }
+    .btn-p:hover { background:var(--gold2); transform:translateY(-2px); }
+
+    .sep { position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(to right,transparent,rgba(201,169,110,.18),transparent); }
+
+    footer { background:#070710; border-top:1px solid rgba(201,169,110,.07); }
+    .footer-top { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:52px; padding:72px 52px 52px; }
+    .footer-brand p { font-weight:200; font-size:.72rem; line-height:1.9; color:rgba(244,240,232,.28); margin-top:18px; max-width:280px; }
+    .footer-brand-wrap { display:flex; align-items:center; gap:12px; }
+    .f-logo { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:1rem; letter-spacing:.22em; text-transform:uppercase; color:var(--ivory); }
+    .f-logo span { color:var(--gold); }
+    .footer-social { display:flex; gap:12px; margin-top:24px; }
+    .soc { width:32px; height:32px; border:1px solid rgba(201,169,110,.18); border-radius:2px; display:flex; align-items:center; justify-content:center; font-size:.6rem; color:rgba(244,240,232,.35); text-decoration:none; text-transform:uppercase; transition:border-color .3s, color .3s; }
+    .soc:hover { border-color:var(--gold); color:var(--gold); }
+    .footer-col h4 { font-family:'Cormorant Garamond',serif; font-weight:400; font-size:.95rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ivory); margin-bottom:22px; }
+    .footer-col ul { list-style:none; }
+    .footer-col ul li { margin-bottom:12px; }
+    .footer-col ul a { font-weight:200; font-size:.7rem; color:rgba(244,240,232,.28); text-decoration:none; transition:color .25s; }
+    .footer-col ul a:hover { color:var(--gold); }
+    .footer-bottom { display:flex; align-items:center; justify-content:space-between; padding:22px 52px; border-top:1px solid rgba(201,169,110,.06); }
+    .footer-copy { font-weight:200; font-size:.62rem; letter-spacing:.16em; color:rgba(244,240,232,.18); }
+    .footer-copy span { color:var(--gold); }
+    .footer-legal { display:flex; gap:24px; }
+    .footer-legal a { font-weight:200; font-size:.6rem; color:rgba(244,240,232,.18); text-decoration:none; transition:color .25s; }
+    .footer-legal a:hover { color:var(--gold); }
+
+    @media(max-width:900px){
+      nav{padding:20px 28px;} nav.scrolled{padding:12px 28px;}
+      .page-hero{padding:60px 28px;}
+      .projects-section{padding:72px 28px;}
+      .projects-full-grid{grid-template-columns:1fr;}
+      .proj-full{grid-template-columns:1fr; direction:ltr!important;}
+      .proj-full-visual{min-height:260px;}
+      .proj-full-body{padding:32px 24px;}
+      .impact-bar{grid-template-columns:1fr 1fr; padding:52px 28px;}
+      .impact-stat{border-right:none; border-bottom:1px solid rgba(201,169,110,.06); padding:28px;}
+      .projects-cta{padding:72px 28px;}
+      .footer-top{grid-template-columns:1fr 1fr;gap:28px;padding:48px 28px 36px;}
+      .footer-bottom{padding:18px 28px;flex-direction:column;gap:12px;text-align:center;}
+    }
+  </style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L9 16M2 9L16 9M4.5 4.5L13.5 13.5M13.5 4.5L4.5 13.5" stroke="#c9a96e" stroke-width="1" stroke-linecap="round" opacity="0.7"/><circle cx="9" cy="9" r="3" stroke="#c9a96e" stroke-width="0.8" opacity="0.5"/></svg>
+    </div>
+    TAMPU <span>·</span> Project
+  </a>
+  <button class="burger" id="burgerBtn" onclick="toggleNav()"><span></span><span></span><span></span></button>
+</nav>
+<div class="nav-overlay" id="navOverlay">
+  <ul class="nav-links">
+    <li><a href="index.html" onclick="closeNav()">Home</a></li>
+    <li><a href="index.html#mission" onclick="closeNav()">Mission</a></li>
+    <li><a href="projects.html" onclick="closeNav()">Projects</a></li>
+    <li><a href="index.html#philosophy" onclick="closeNav()">Philosophy</a></li>
+    <li><a href="about.html" onclick="closeNav()">About Us</a></li>
+    <li><a href="contact.html" onclick="closeNav()">Contact</a></li>
+  </ul>
+</div>
+
+<section class="page-hero">
+  <div class="page-hero-bg"></div>
+  <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.22;" viewBox="0 0 1440 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <path d="M0,450 L60,280 L130,370 L200,200 L280,320 L360,160 L440,290 L520,140 L600,270 L680,180 L760,300 L840,150 L920,280 L1000,180 L1080,310 L1160,170 L1240,290 L1320,180 L1380,250 L1440,200 L1440,600 L0,600Z" fill="rgba(10,40,18,0.65)"/>
+    <path d="M0,500 L100,380 L200,440 L300,360 L400,420 L500,340 L600,400 L700,330 L800,390 L900,340 L1000,400 L1100,350 L1200,400 L1300,355 L1440,390 L1440,600 L0,600Z" fill="rgba(8,28,14,0.8)"/>
+  </svg>
+  <div class="page-hero-content">
+    <p class="page-eyebrow">Our Work</p>
+    <h1 class="page-title">Active <em>Projects</em></h1>
+  </div>
+</section>
+
+<section class="projects-section">
+  <div class="sep"></div>
+  <div class="projects-filter">
+    <button class="filter-btn active">All</button>
+    <button class="filter-btn">Biodiversity</button>
+    <button class="filter-btn">Communities</button>
+    <button class="filter-btn">Education</button>
+    <button class="filter-btn">Water</button>
+  </div>
+
+  <div class="projects-full-grid">
+
+    <!-- Project 1 -->
+    <div class="proj-full">
+      <div class="proj-full-visual">
+        <svg viewBox="0 0 500 380" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="pp1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#071810"/><stop offset="100%" stop-color="#102818"/></linearGradient>
+            <radialGradient id="pp1g" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="rgba(50,150,60,0.3)"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+          </defs>
+          <rect width="500" height="380" fill="url(#pp1)"/>
+          <rect width="500" height="380" fill="url(#pp1g)"/>
+          <!-- Dense Amazon canopy aerial -->
+          <circle cx="80" cy="60" r="55" fill="rgba(25,90,35,0.5)"/>
+          <circle cx="180" cy="45" r="65" fill="rgba(30,100,40,0.45)"/>
+          <circle cx="290" cy="55" r="60" fill="rgba(28,95,38,0.48)"/>
+          <circle cx="400" cy="50" r="58" fill="rgba(25,90,35,0.45)"/>
+          <circle cx="480" cy="65" r="45" fill="rgba(30,100,40,0.4)"/>
+          <circle cx="120" cy="120" r="50" fill="rgba(20,85,32,0.42)"/>
+          <circle cx="240" cy="110" r="58" fill="rgba(28,95,38,0.4)"/>
+          <circle cx="360" cy="115" r="55" fill="rgba(25,90,35,0.42)"/>
+          <circle cx="455" cy="125" r="42" fill="rgba(22,88,34,0.38)"/>
+          <!-- River winding through -->
+          <path d="M0,180 Q80,150 160,170 Q240,190 320,165 Q400,145 500,170" stroke="rgba(30,80,150,0.4)" stroke-width="22" fill="none"/>
+          <path d="M0,182 Q80,152 160,172 Q240,192 320,167 Q400,147 500,172" stroke="rgba(40,100,180,0.2)" stroke-width="12" fill="none"/>
+          <!-- Undergrowth -->
+          <path d="M0,300 Q250,260 500,285 L500,380 L0,380Z" fill="rgba(10,40,15,0.75)"/>
+          <path d="M0,340 Q200,315 400,330 L500,325 L500,380 L0,380Z" fill="rgba(8,30,12,0.85)"/>
+          <!-- Canopy light -->
+          <circle cx="200" cy="220" r="6" fill="rgba(201,169,110,0.1)"/>
+          <circle cx="320" cy="240" r="5" fill="rgba(201,169,110,0.09)"/>
+          <circle cx="400" cy="210" r="7" fill="rgba(201,169,110,0.08)"/>
+        </svg>
+      </div>
+      <div class="proj-full-body">
+        <p class="p-num">01</p>
+        <p class="p-tag">Biodiversity</p>
+        <h3 class="p-title">Amazon Green<br><em>Corridor</em></h3>
+        <p class="p-body">Restoring biological corridors across 12 river basins in the Peruvian and Brazilian Amazon, reconnecting fragmented habitats for jaguar, tapir, and over 400 endemic bird species.</p>
+        <div class="p-stats">
+          <div class="p-stat-item"><div class="val">840</div><div class="lbl">Hectares</div></div>
+          <div class="p-stat-item"><div class="val">14</div><div class="lbl">Communities</div></div>
+          <div class="p-stat-item"><div class="val">6</div><div class="lbl">Years active</div></div>
+        </div>
+        <a href="#" class="p-link">Learn More →</a>
+      </div>
+    </div>
+
+    <!-- Project 2 -->
+    <div class="proj-full">
+      <div class="proj-full-visual">
+        <svg viewBox="0 0 500 380" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="pp2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1e1408"/><stop offset="100%" stop-color="#2a1c0a"/></linearGradient>
+          </defs>
+          <rect width="500" height="380" fill="url(#pp2)"/>
+          <!-- Andean terraces with crops -->
+          <path d="M0,380 L0,260 Q125,220 250,240 Q375,220 500,250 L500,380Z" fill="rgba(50,35,12,0.6)"/>
+          <path d="M0,380 L0,295 Q100,265 200,280 Q300,260 400,275 Q450,265 500,278 L500,380Z" fill="rgba(40,28,10,0.7)"/>
+          <path d="M0,380 L0,320 Q125,300 250,310 Q375,295 500,315 L500,380Z" fill="rgba(32,22,8,0.8)"/>
+          <path d="M0,380 L0,348 Q150,335 300,342 Q400,332 500,345 L500,380Z" fill="rgba(24,16,6,0.9)"/>
+          <!-- Mountain range -->
+          <path d="M-20,280 L60,120 L140,220 L200,80 L280,180 L340,60 L420,160 L490,90 L540,130 L540,380 L-20,380Z" fill="rgba(60,45,18,0.35)"/>
+          <path d="M-20,300 L80,180 L160,250 L240,150 L310,210 L380,140 L450,200 L540,170 L540,380 L-20,380Z" fill="rgba(45,32,12,0.5)"/>
+          <!-- Snow -->
+          <path d="M196,90 L200,80 L204,90Z" fill="rgba(244,240,232,0.2)"/>
+          <path d="M336,70 L340,60 L344,70Z" fill="rgba(244,240,232,0.18)"/>
+          <!-- Seed burst (botanical illustration style) -->
+          <circle cx="380" cy="110" r="28" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="0.8"/>
+          <path d="M380,82 L380,138" stroke="rgba(201,169,110,0.12)" stroke-width="0.6"/>
+          <path d="M352,110 L408,110" stroke="rgba(201,169,110,0.12)" stroke-width="0.6"/>
+          <path d="M360,90 L400,130" stroke="rgba(201,169,110,0.1)" stroke-width="0.6"/>
+          <path d="M400,90 L360,130" stroke="rgba(201,169,110,0.1)" stroke-width="0.6"/>
+          <circle cx="380" cy="110" r="8" fill="rgba(180,130,50,0.15)"/>
+          <!-- Sky -->
+          <rect width="500" height="80" fill="rgba(10,8,22,0.5)"/>
+          <circle cx="60" cy="30" r="0.8" fill="rgba(244,240,232,0.6)"/>
+          <circle cx="180" cy="20" r="1" fill="rgba(244,240,232,0.55)"/>
+          <circle cx="300" cy="35" r="0.8" fill="rgba(244,240,232,0.5)"/>
+          <circle cx="440" cy="25" r="0.9" fill="rgba(244,240,232,0.55)"/>
+        </svg>
+      </div>
+      <div class="proj-full-body">
+        <p class="p-num">02</p>
+        <p class="p-tag">Communities</p>
+        <h3 class="p-title">Ancestral<br><em>Seeds</em></h3>
+        <p class="p-body">Partnering with Quechua and Aymara communities to rescue, document, and replant over 2,400 native crop varieties that are the living archive of 10,000 years of Andean agriculture.</p>
+        <div class="p-stats">
+          <div class="p-stat-item"><div class="val">2.4k</div><div class="lbl">Varieties</div></div>
+          <div class="p-stat-item"><div class="val">12</div><div class="lbl">Seed Banks</div></div>
+          <div class="p-stat-item"><div class="val">9</div><div class="lbl">Years active</div></div>
+        </div>
+        <a href="#" class="p-link">Learn More →</a>
+      </div>
+    </div>
+
+    <!-- Project 3 -->
+    <div class="proj-full">
+      <div class="proj-full-visual">
+        <svg viewBox="0 0 500 380" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="pp3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0e1422"/><stop offset="100%" stop-color="#121828"/></linearGradient>
+          </defs>
+          <rect width="500" height="380" fill="url(#pp3)"/>
+          <!-- Night forest with stars -->
+          <circle cx="50" cy="30" r="1" fill="rgba(244,240,232,0.6)"/>
+          <circle cx="140" cy="18" r="0.8" fill="rgba(244,240,232,0.55)"/>
+          <circle cx="230" cy="28" r="1" fill="rgba(244,240,232,0.5)"/>
+          <circle cx="320" cy="15" r="0.8" fill="rgba(244,240,232,0.6)"/>
+          <circle cx="420" cy="25" r="1" fill="rgba(244,240,232,0.55)"/>
+          <circle cx="470" cy="12" r="0.7" fill="rgba(244,240,232,0.45)"/>
+          <circle cx="90" cy="55" r="0.7" fill="rgba(244,240,232,0.4)"/>
+          <circle cx="270" cy="45" r="0.8" fill="rgba(244,240,232,0.5)"/>
+          <circle cx="380" cy="50" r="0.7" fill="rgba(244,240,232,0.45)"/>
+          <!-- Moon -->
+          <circle cx="420" cy="60" r="22" fill="rgba(232,213,163,0.07)" stroke="rgba(232,213,163,0.1)" stroke-width="0.5"/>
+          <circle cx="428" cy="56" r="17" fill="rgba(14,20,34,0.92)"/>
+          <!-- Dark forest -->
+          <path d="M-20,380 L20,200 L60,280 L100,160 L140,250 L180,120 L220,220 L260,100 L300,210 L340,130 L380,220 L420,100 L460,200 L500,140 L520,180 L520,380Z" fill="rgba(6,12,18,0.97)"/>
+          <path d="M-20,380 L40,280 L100,330 L160,270 L220,310 L280,260 L340,300 L400,258 L460,295 L520,265 L520,380Z" fill="rgba(5,10,14,1)"/>
+          <!-- Bioluminescence -->
+          <circle cx="120" cy="340" r="4" fill="rgba(60,220,140,0.12)"/>
+          <circle cx="240" cy="310" r="3" fill="rgba(60,220,140,0.1)"/>
+          <circle cx="350" cy="330" r="4" fill="rgba(60,220,140,0.12)"/>
+          <circle cx="450" cy="305" r="3" fill="rgba(60,220,140,0.1)"/>
+          <!-- Youth guardian figures (abstract) -->
+          <circle cx="190" cy="245" r="8" fill="none" stroke="rgba(201,169,110,0.18)" stroke-width="0.8"/>
+          <line x1="190" y1="253" x2="190" y2="275" stroke="rgba(201,169,110,0.14)" stroke-width="0.8"/>
+          <path d="M182,262 L190,258 L198,262" stroke="rgba(201,169,110,0.14)" stroke-width="0.8" fill="none"/>
+          <circle cx="230" cy="250" r="8" fill="none" stroke="rgba(201,169,110,0.15)" stroke-width="0.8"/>
+          <line x1="230" y1="258" x2="230" y2="278" stroke="rgba(201,169,110,0.12)" stroke-width="0.8"/>
+          <path d="M222,266 L230,262 L238,266" stroke="rgba(201,169,110,0.12)" stroke-width="0.8" fill="none"/>
+        </svg>
+      </div>
+      <div class="proj-full-body">
+        <p class="p-num">03</p>
+        <p class="p-tag">Education</p>
+        <h3 class="p-title">Forest<br><em>Guardians</em></h3>
+        <p class="p-body">Training young indigenous people ages 14–22 as certified environmental monitors, equipping them with scientific tools while honoring their ancestral ecological knowledge.</p>
+        <div class="p-stats">
+          <div class="p-stat-item"><div class="val">600+</div><div class="lbl">Youth trained</div></div>
+          <div class="p-stat-item"><div class="val">8</div><div class="lbl">Countries</div></div>
+          <div class="p-stat-item"><div class="val">7</div><div class="lbl">Years active</div></div>
+        </div>
+        <a href="#" class="p-link">Learn More →</a>
+      </div>
+    </div>
+
+    <!-- Project 4 -->
+    <div class="proj-full">
+      <div class="proj-full-visual">
+        <svg viewBox="0 0 500 380" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="pp4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#08141e"/><stop offset="100%" stop-color="#0e1c28"/></linearGradient>
+            <radialGradient id="pp4g" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="rgba(40,100,160,0.25)"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+          </defs>
+          <rect width="500" height="380" fill="url(#pp4)"/>
+          <rect width="500" height="380" fill="url(#pp4g)"/>
+          <!-- Glacial lake high altitude -->
+          <!-- Sky with stars -->
+          <circle cx="60" cy="25" r="0.9" fill="rgba(244,240,232,0.55)"/>
+          <circle cx="160" cy="15" r="0.7" fill="rgba(244,240,232,0.5)"/>
+          <circle cx="260" cy="28" r="1" fill="rgba(244,240,232,0.6)"/>
+          <circle cx="380" cy="18" r="0.8" fill="rgba(244,240,232,0.5)"/>
+          <circle cx="470" cy="30" r="0.7" fill="rgba(244,240,232,0.45)"/>
+          <!-- Peaks -->
+          <path d="M-20,380 L40,160 L100,250 L170,80 L250,180 L320,60 L400,160 L460,90 L540,140 L540,380Z" fill="rgba(18,35,50,0.6)"/>
+          <path d="M-20,380 L60,220 L140,290 L220,170 L300,250 L380,200 L460,240 L540,210 L540,380Z" fill="rgba(12,25,40,0.75)"/>
+          <!-- Snow on peaks -->
+          <path d="M164,93 L170,80 L176,93 Q170,106 164,93Z" fill="rgba(244,240,232,0.25)"/>
+          <path d="M314,72 L320,60 L326,72 Q320,85 314,72Z" fill="rgba(244,240,232,0.22)"/>
+          <!-- Lake reflection -->
+          <path d="M0,280 Q125,255 250,265 Q375,255 500,272 L500,380 L0,380Z" fill="rgba(15,45,80,0.55)"/>
+          <path d="M0,300 Q100,285 200,292 Q320,282 500,295 L500,380 L0,380Z" fill="rgba(10,35,65,0.65)"/>
+          <!-- Water shimmer -->
+          <path d="M60,310 Q80,305 100,310" stroke="rgba(100,160,220,0.15)" stroke-width="1" fill="none"/>
+          <path d="M200,295 Q225,290 250,295" stroke="rgba(100,160,220,0.12)" stroke-width="1" fill="none"/>
+          <path d="M350,305 Q370,300 390,305" stroke="rgba(100,160,220,0.13)" stroke-width="1" fill="none"/>
+          <!-- Mountain reflection in lake (inverted) -->
+          <path d="M150,310 L175,360 L200,330 L225,375 L250,345" stroke="rgba(25,50,80,0.3)" stroke-width="1" fill="none"/>
+          <!-- Water drop motif -->
+          <path d="M440,120 Q450,105 460,120 Q460,135 450,140 Q440,135 440,120Z" fill="rgba(60,140,200,0.15)" stroke="rgba(100,160,220,0.2)" stroke-width="0.5"/>
+          <circle cx="450" cy="115" r="3" fill="rgba(100,160,220,0.2)"/>
+        </svg>
+      </div>
+      <div class="proj-full-body">
+        <p class="p-num">04</p>
+        <p class="p-tag">Water</p>
+        <h3 class="p-title">Living<br><em>Water</em></h3>
+        <p class="p-body">Protecting high-altitude glacial lakes and wetlands (bofedales) in the Andes — the water towers that supply drinking water to millions of people and irrigate entire agricultural valleys.</p>
+        <div class="p-stats">
+          <div class="p-stat-item"><div class="val">18</div><div class="lbl">Lakes protected</div></div>
+          <div class="p-stat-item"><div class="val">3M</div><div class="lbl">People served</div></div>
+          <div class="p-stat-item"><div class="val">3</div><div class="lbl">Years active</div></div>
+        </div>
+        <a href="#" class="p-link">Learn More →</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="impact-bar">
+  <div class="impact-stat"><div class="big">2,000</div><div class="desc">Hectares Restored</div></div>
+  <div class="impact-stat"><div class="big">38</div><div class="desc">Partner Communities</div></div>
+  <div class="impact-stat"><div class="big">2,400+</div><div class="desc">Seed Varieties Saved</div></div>
+  <div class="impact-stat"><div class="big">600+</div><div class="desc">Guardians Trained</div></div>
+</section>
+
+<!-- CTA -->
+<section class="projects-cta">
+  <h2 class="cta-title">Support a <em>project</em></h2>
+  <p class="cta-sub">Your contribution directly funds field operations, community partnerships, and the protection of irreplaceable ecosystems.</p>
+  <a href="contact.html" class="btn-p">Get Involved</a>
+</section>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-brand-wrap">
+        <div class="nav-logo-mark" style="width:46px;height:46px;">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3L11 19M3 11L19 11M5.5 5.5L16.5 16.5M16.5 5.5L5.5 16.5" stroke="#c9a96e" stroke-width="1" stroke-linecap="round" opacity="0.6"/><circle cx="11" cy="11" r="4" stroke="#c9a96e" stroke-width="0.8" opacity="0.4"/></svg>
+        </div>
+        <span class="f-logo">TAMPU <span>·</span> Project</span>
+      </div>
+      <p>Dedicated to preserving ecosystems and ancestral knowledge across Latin America.</p>
+      <div class="footer-social"><a href="#" class="soc">ig</a><a href="#" class="soc">fb</a><a href="#" class="soc">yt</a><a href="#" class="soc">in</a></div>
+    </div>
+    <div class="footer-col"><h4>Navigation</h4><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About Us</a></li><li><a href="projects.html">Projects</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Projects</h4><ul><li><a href="#">Green Corridor</a></li><li><a href="#">Ancestral Seeds</a></li><li><a href="#">Forest Guardians</a></li><li><a href="#">Living Water</a></li></ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul><li><a href="mailto:hello@tampu.org">hello@tampu.org</a></li><li><a href="#">+51 999 000 111</a></li><li><a href="#">Lima, Peru</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 TAMPU Project · All rights reserved · Made with <span>♥</span> for the earth</p>
+    <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Cookies</a></div>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+  let navOpen = false;
+  function toggleNav(){navOpen=!navOpen;document.getElementById('burgerBtn').classList.toggle('open',navOpen);document.getElementById('navOverlay').classList.toggle('open',navOpen);document.body.style.overflow=navOpen?'hidden':'';}
+  function closeNav(){navOpen=false;document.getElementById('burgerBtn').classList.remove('open');document.getElementById('navOverlay').classList.remove('open');document.body.style.overflow='';}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeNav();});
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => { document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); });
+  });
+  const revealEls = document.querySelectorAll('.proj-full, .impact-stat');
+  const obs = new IntersectionObserver(entries => { entries.forEach((e,i) => { if(e.isIntersecting){ setTimeout(()=>{ e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; },i*100); obs.unobserve(e.target); } }); }, {threshold:0.08});
+  revealEls.forEach(el => { el.style.opacity='0'; el.style.transform='translateY(28px)'; el.style.transition='opacity .7s ease, transform .7s cubic-bezier(.16,1,.3,1)'; obs.observe(el); });
+</script>
+</body>
+</html>

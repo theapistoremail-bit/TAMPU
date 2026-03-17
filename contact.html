@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact & Donate — TAMPU Project</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--gold:#c9a96e;--gold2:#e8d5a3;--dark:#0a0a0f;--deep:#0d0d14;--mist:rgba(201,169,110,0.07);--ivory:#f4f0e8;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Montserrat',sans-serif;background:var(--dark);color:var(--ivory);overflow-x:hidden;}
+    ::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:var(--dark);}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px;}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:24px 52px;transition:background .4s,padding .3s;}
+    nav.scrolled{background:rgba(10,10,15,0.95);backdrop-filter:blur(20px);padding:14px 52px;border-bottom:1px solid rgba(201,169,110,0.1);}
+    .nav-logo{display:flex;align-items:center;gap:10px;font-family:'Cormorant Garamond',serif;font-weight:300;font-size:1.05rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ivory);text-decoration:none;}
+    .nav-logo-mark{width:32px;height:32px;border-radius:50%;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.3);display:flex;align-items:center;justify-content:center;}
+    .nav-logo span{color:var(--gold);}
+    .burger{background:transparent;border:1px solid rgba(201,169,110,.28);border-radius:3px;width:44px;height:34px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:border-color .3s;}
+    .burger:hover,.burger.open{border-color:var(--gold);}
+    .burger span{display:block;width:18px;height:1px;background:var(--ivory);border-radius:1px;transition:all .35s cubic-bezier(.16,1,.3,1);transform-origin:center;}
+    .burger.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}.burger.open span:nth-child(2){opacity:0;transform:scaleX(0);}.burger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+    .nav-overlay{position:fixed;inset:0;z-index:190;background:rgba(8,8,13,.97);backdrop-filter:blur(24px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .4s;}
+    .nav-overlay.open{opacity:1;pointer-events:all;}
+    .nav-links{list-style:none;text-align:center;}
+    .nav-links a{display:block;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(2.5rem,6vw,5rem);color:rgba(244,240,232,.3);text-decoration:none;line-height:1.3;transform:translateY(55px);opacity:0;transition:color .25s,transform .55s cubic-bezier(.16,1,.3,1),opacity .55s;}
+    .nav-links a:hover{color:var(--ivory);}
+    .nav-overlay.open .nav-links li:nth-child(1) a{transform:translateY(0);opacity:1;transition-delay:.06s;}
+    .nav-overlay.open .nav-links li:nth-child(2) a{transform:translateY(0);opacity:1;transition-delay:.12s;}
+    .nav-overlay.open .nav-links li:nth-child(3) a{transform:translateY(0);opacity:1;transition-delay:.18s;}
+    .nav-overlay.open .nav-links li:nth-child(4) a{transform:translateY(0);opacity:1;transition-delay:.24s;}
+    .nav-overlay.open .nav-links li:nth-child(5) a{transform:translateY(0);opacity:1;transition-delay:.30s;}
+    .nav-overlay.open .nav-links li:nth-child(6) a{transform:translateY(0);opacity:1;transition-delay:.36s;}
+
+    /* PAGE HERO */
+    .page-hero{position:relative;height:55vh;display:flex;align-items:flex-end;padding:80px 52px;overflow:hidden;}
+    .page-hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#071a0e 0%,#0d2418 40%,#091510 100%);}
+    .page-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,15,1) 0%,transparent 60%);}
+    .page-hero-content{position:relative;z-index:2;}
+    .page-eyebrow{font-weight:200;font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+    .page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(3rem,7vw,6rem);line-height:.95;color:var(--ivory);}
+    .page-title em{font-style:italic;color:rgba(244,240,232,.45);}
+
+    /* CONTACT LAYOUT */
+    .contact-layout{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;}
+
+    /* LEFT: FORM */
+    .contact-form-side{background:var(--deep);padding:100px 64px 100px 52px;}
+    .form-label{font-weight:200;font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+    .form-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(2rem,3.5vw,3rem);line-height:1.1;color:var(--ivory);margin-bottom:32px;}
+    .form-title em{font-style:italic;color:rgba(244,240,232,.45);}
+    .gold-rule{width:34px;height:1px;background:var(--gold);opacity:.38;margin:0 0 36px;}
+
+    .form-group{margin-bottom:28px;}
+    .form-group label{display:block;font-weight:200;font-size:.62rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(244,240,232,.4);margin-bottom:10px;}
+    .form-group input,
+    .form-group select,
+    .form-group textarea{
+      width:100%;background:rgba(201,169,110,0.04);border:1px solid rgba(201,169,110,0.14);
+      border-radius:1px;padding:14px 16px;
+      font-family:'Montserrat',sans-serif;font-weight:200;font-size:.82rem;
+      color:var(--ivory);outline:none;
+      transition:border-color .3s,background .3s;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder{color:rgba(244,240,232,0.22);}
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus{border-color:rgba(201,169,110,0.45);background:rgba(201,169,110,0.07);}
+    .form-group select{appearance:none;cursor:pointer;}
+    .form-group select option{background:var(--dark);color:var(--ivory);}
+    .form-group textarea{resize:vertical;min-height:120px;line-height:1.7;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .form-check{display:flex;align-items:flex-start;gap:12px;margin-bottom:32px;}
+    .form-check input[type="checkbox"]{width:16px;height:16px;min-width:16px;accent-color:var(--gold);margin-top:2px;cursor:pointer;}
+    .form-check label{font-weight:200;font-size:.7rem;line-height:1.75;color:rgba(244,240,232,.35);}
+    .form-check label a{color:var(--gold);text-decoration:none;}
+    .btn-submit{width:100%;padding:18px;background:var(--gold);color:var(--dark);font-family:'Montserrat',sans-serif;font-weight:400;font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;border:none;border-radius:1px;cursor:pointer;transition:background .3s,transform .2s;}
+    .btn-submit:hover{background:var(--gold2);transform:translateY(-2px);}
+    .form-success{display:none;text-align:center;padding:40px 20px;}
+    .form-success .check-icon{font-size:2.5rem;margin-bottom:16px;display:block;}
+    .form-success h3{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:1.8rem;color:var(--ivory);margin-bottom:12px;}
+    .form-success p{font-weight:200;font-size:.78rem;color:rgba(244,240,232,.4);line-height:1.8;}
+
+    /* RIGHT: INFO + DONATE */
+    .contact-info-side{background:var(--dark);padding:100px 52px 100px 64px;display:flex;flex-direction:column;gap:64px;}
+
+    .info-block{}
+    .info-label{font-weight:200;font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+    .info-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:1.6rem;color:var(--ivory);margin-bottom:20px;}
+    .info-items{display:flex;flex-direction:column;gap:14px;}
+    .info-item{display:flex;align-items:flex-start;gap:14px;}
+    .info-icon{width:36px;height:36px;border:1px solid rgba(201,169,110,.15);border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.8rem;}
+    .info-item-text .ttl{font-weight:300;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+    .info-item-text .val{font-weight:200;font-size:.8rem;color:rgba(244,240,232,.45);line-height:1.6;}
+
+    /* Donation amounts */
+    .donate-block{border:1px solid rgba(201,169,110,.1);border-radius:2px;padding:36px;}
+    .donate-block .info-label{margin-bottom:8px;}
+    .donate-subtitle{font-weight:200;font-size:.74rem;color:rgba(244,240,232,.35);margin-bottom:24px;line-height:1.7;}
+    .donate-amounts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+    .donate-amount{border:1px solid rgba(201,169,110,.15);background:transparent;padding:12px 8px;text-align:center;cursor:pointer;font-family:'Cormorant Garamond',serif;font-weight:300;font-size:1.3rem;color:rgba(244,240,232,.45);border-radius:1px;transition:all .3s;}
+    .donate-amount:hover,.donate-amount.active{border-color:var(--gold);color:var(--gold);background:rgba(201,169,110,0.07);}
+    .donate-custom{width:100%;background:rgba(201,169,110,0.04);border:1px solid rgba(201,169,110,0.14);border-radius:1px;padding:12px 16px;font-family:'Montserrat',sans-serif;font-weight:200;font-size:.82rem;color:var(--ivory);outline:none;margin-bottom:20px;transition:border-color .3s;}
+    .donate-custom:focus{border-color:rgba(201,169,110,.45);}
+    .donate-custom::placeholder{color:rgba(244,240,232,.22);}
+    .donate-btn{width:100%;padding:16px;background:transparent;color:var(--gold);font-family:'Montserrat',sans-serif;font-weight:200;font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;border:1px solid rgba(201,169,110,.3);border-radius:1px;cursor:pointer;transition:all .3s;}
+    .donate-btn:hover{background:rgba(201,169,110,0.08);border-color:var(--gold);}
+
+    /* MAP VISUAL */
+    .map-visual{border:1px solid rgba(201,169,110,.08);border-radius:2px;overflow:hidden;}
+
+    .sep{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(201,169,110,.18),transparent);}
+
+    footer{background:#070710;border-top:1px solid rgba(201,169,110,.07);}
+    .footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:52px;padding:72px 52px 52px;}
+    .footer-brand p{font-weight:200;font-size:.72rem;line-height:1.9;color:rgba(244,240,232,.28);margin-top:18px;max-width:280px;}
+    .footer-brand-wrap{display:flex;align-items:center;gap:12px;}
+    .f-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:1rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ivory);}
+    .f-logo span{color:var(--gold);}
+    .footer-social{display:flex;gap:12px;margin-top:24px;}
+    .soc{width:32px;height:32px;border:1px solid rgba(201,169,110,.18);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:rgba(244,240,232,.35);text-decoration:none;text-transform:uppercase;transition:border-color .3s,color .3s;}
+    .soc:hover{border-color:var(--gold);color:var(--gold);}
+    .footer-col h4{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:.95rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ivory);margin-bottom:22px;}
+    .footer-col ul{list-style:none;}
+    .footer-col ul li{margin-bottom:12px;}
+    .footer-col ul a{font-weight:200;font-size:.7rem;color:rgba(244,240,232,.28);text-decoration:none;transition:color .25s;}
+    .footer-col ul a:hover{color:var(--gold);}
+    .footer-bottom{display:flex;align-items:center;justify-content:space-between;padding:22px 52px;border-top:1px solid rgba(201,169,110,.06);}
+    .footer-copy{font-weight:200;font-size:.62rem;letter-spacing:.16em;color:rgba(244,240,232,.18);}
+    .footer-copy span{color:var(--gold);}
+    .footer-legal{display:flex;gap:24px;}
+    .footer-legal a{font-weight:200;font-size:.6rem;color:rgba(244,240,232,.18);text-decoration:none;transition:color .25s;}
+    .footer-legal a:hover{color:var(--gold);}
+
+    @media(max-width:900px){
+      nav{padding:20px 28px;} nav.scrolled{padding:12px 28px;}
+      .page-hero{padding:60px 28px;}
+      .contact-layout{grid-template-columns:1fr;}
+      .contact-form-side{padding:72px 28px;}
+      .contact-info-side{padding:72px 28px;}
+      .form-row{grid-template-columns:1fr;}
+      .footer-top{grid-template-columns:1fr 1fr;gap:28px;padding:48px 28px 36px;}
+      .footer-bottom{padding:18px 28px;flex-direction:column;gap:12px;text-align:center;}
+    }
+  </style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L9 16M2 9L16 9M4.5 4.5L13.5 13.5M13.5 4.5L4.5 13.5" stroke="#c9a96e" stroke-width="1" stroke-linecap="round" opacity="0.7"/><circle cx="9" cy="9" r="3" stroke="#c9a96e" stroke-width="0.8" opacity="0.5"/></svg>
+    </div>
+    TAMPU <span>·</span> Project
+  </a>
+  <button class="burger" id="burgerBtn" onclick="toggleNav()"><span></span><span></span><span></span></button>
+</nav>
+<div class="nav-overlay" id="navOverlay">
+  <ul class="nav-links">
+    <li><a href="index.html" onclick="closeNav()">Home</a></li>
+    <li><a href="index.html#mission" onclick="closeNav()">Mission</a></li>
+    <li><a href="projects.html" onclick="closeNav()">Projects</a></li>
+    <li><a href="index.html#philosophy" onclick="closeNav()">Philosophy</a></li>
+    <li><a href="about.html" onclick="closeNav()">About Us</a></li>
+    <li><a href="contact.html" onclick="closeNav()">Contact</a></li>
+  </ul>
+</div>
+
+<section class="page-hero">
+  <div class="page-hero-bg"></div>
+  <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.2;" viewBox="0 0 1440 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <path d="M0,400 L80,240 L180,320 L280,160 L380,280 L480,140 L580,250 L680,160 L780,270 L880,150 L980,260 L1080,170 L1180,280 L1280,175 L1380,250 L1440,200 L1440,600 L0,600Z" fill="rgba(10,40,18,0.6)"/>
+    <path d="M0,460 L100,360 L220,410 L340,340 L460,395 L580,330 L700,385 L820,325 L940,375 L1060,330 L1180,375 L1300,335 L1440,365 L1440,600 L0,600Z" fill="rgba(8,28,14,0.75)"/>
+    <radialGradient id="chg" cx="20%" cy="60%" r="40%"><stop offset="0%" stop-color="rgba(201,169,110,0.1)"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+    <rect width="1440" height="600" fill="url(#chg)"/>
+  </svg>
+  <div class="page-hero-content">
+    <p class="page-eyebrow">Join the Movement</p>
+    <h1 class="page-title">Contact <em>&amp; Give</em></h1>
+  </div>
+</section>
+
+<div class="contact-layout">
+
+  <!-- FORM -->
+  <div class="contact-form-side">
+    <p class="form-label">Send a Message</p>
+    <h2 class="form-title">We'd love to<br><em>hear from you</em></h2>
+    <div class="gold-rule"></div>
+
+    <div id="contactForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" placeholder="Elena">
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" placeholder="Ríos">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" placeholder="hello@example.com">
+      </div>
+      <div class="form-group">
+        <label>Organization (optional)</label>
+        <input type="text" placeholder="Your organization or institution">
+      </div>
+      <div class="form-group">
+        <label>How can we help?</label>
+        <select>
+          <option value="" disabled selected>Select a topic</option>
+          <option>Partnership inquiry</option>
+          <option>Donation / Funding</option>
+          <option>Volunteer opportunities</option>
+          <option>Research collaboration</option>
+          <option>Press & Media</option>
+          <option>General question</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea placeholder="Tell us about your interest in TAMPU, your work, or how you'd like to collaborate..."></textarea>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" id="agree">
+        <label for="agree">I agree to the <a href="#">privacy policy</a> and consent to TAMPU Project storing my contact information to respond to this inquiry.</label>
+      </div>
+      <button class="btn-submit" onclick="submitForm()">Send Message</button>
+    </div>
+
+    <div class="form-success" id="formSuccess">
+      <span class="check-icon">🌿</span>
+      <h3>Message received.</h3>
+      <p>Thank you for reaching out. A member of our team will get back to you within 2–3 business days. In the meantime, explore our <a href="projects.html" style="color:var(--gold);text-decoration:none;">active projects</a>.</p>
+    </div>
+  </div>
+
+  <!-- INFO + DONATE -->
+  <div class="contact-info-side">
+
+    <div class="info-block">
+      <p class="info-label">Find Us</p>
+      <h3 class="info-title">Our locations</h3>
+      <div class="info-items">
+        <div class="info-item">
+          <div class="info-icon">🌎</div>
+          <div class="info-item-text">
+            <p class="ttl">Headquarters</p>
+            <p class="val">Av. Larco 1301, Miraflores<br>Lima 15074, Peru</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">📧</div>
+          <div class="info-item-text">
+            <p class="ttl">General Inquiries</p>
+            <p class="val">hello@tampu.org</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">📞</div>
+          <div class="info-item-text">
+            <p class="ttl">Phone</p>
+            <p class="val">+51 999 000 111<br>Mon–Fri, 9am–6pm PET</p>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">🌿</div>
+          <div class="info-item-text">
+            <p class="ttl">Field Offices</p>
+            <p class="val">La Paz, Bolivia · Quito, Ecuador<br>Bogotá, Colombia · Brasília, Brazil</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map illustration -->
+    <div class="map-visual">
+      <svg viewBox="0 0 520 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;">
+        <rect width="520" height="280" fill="rgba(8,14,20,1)"/>
+        <!-- South America outline (simplified) -->
+        <path d="M180,20 Q200,15 220,18 Q240,20 260,28 Q280,36 290,50 Q300,64 305,80 Q310,96 315,115 Q320,134 318,155 Q316,176 310,196 Q304,216 295,234 Q286,252 274,265 Q265,274 255,278 Q245,280 235,275 Q225,270 215,260 Q205,250 195,238 Q185,226 178,212 Q171,198 167,182 Q163,166 162,148 Q161,130 163,112 Q165,94 168,76 Q171,58 175,40 Q177,30 180,20Z" fill="rgba(15,35,20,0.8)" stroke="rgba(201,169,110,0.15)" stroke-width="0.8"/>
+        <!-- Country divisions (faint) -->
+        <path d="M210,120 Q230,115 250,118 Q265,120 270,135" stroke="rgba(201,169,110,0.06)" stroke-width="0.5" fill="none"/>
+        <path d="M200,155 Q218,150 240,152 Q258,154 268,165" stroke="rgba(201,169,110,0.06)" stroke-width="0.5" fill="none"/>
+        <path d="M185,90 Q200,84 218,88 Q230,91 235,105" stroke="rgba(201,169,110,0.06)" stroke-width="0.5" fill="none"/>
+        <!-- Amazon river -->
+        <path d="M180,130 Q205,125 230,128 Q255,131 275,125" stroke="rgba(30,80,150,0.25)" stroke-width="3" fill="none"/>
+        <!-- Location pins -->
+        <!-- Lima, Peru -->
+        <circle cx="195" cy="168" r="4" fill="var(--gold)" opacity="0.8"/>
+        <circle cx="195" cy="168" r="8" fill="none" stroke="rgba(201,169,110,0.3)" stroke-width="1"/>
+        <text x="202" y="167" font-family="Montserrat,sans-serif" font-size="6" fill="rgba(201,169,110,0.7)" font-weight="200">Lima HQ</text>
+        <!-- La Paz -->
+        <circle cx="215" cy="185" r="3" fill="rgba(201,169,110,0.5)"/>
+        <circle cx="215" cy="185" r="6" fill="none" stroke="rgba(201,169,110,0.2)" stroke-width="0.8"/>
+        <text x="222" y="184" font-family="Montserrat,sans-serif" font-size="5.5" fill="rgba(201,169,110,0.55)" font-weight="200">La Paz</text>
+        <!-- Quito -->
+        <circle cx="188" cy="130" r="3" fill="rgba(201,169,110,0.5)"/>
+        <circle cx="188" cy="130" r="6" fill="none" stroke="rgba(201,169,110,0.2)" stroke-width="0.8"/>
+        <text x="195" y="129" font-family="Montserrat,sans-serif" font-size="5.5" fill="rgba(201,169,110,0.55)" font-weight="200">Quito</text>
+        <!-- Bogotá -->
+        <circle cx="196" cy="112" r="3" fill="rgba(201,169,110,0.5)"/>
+        <circle cx="196" cy="112" r="6" fill="none" stroke="rgba(201,169,110,0.2)" stroke-width="0.8"/>
+        <text x="203" y="111" font-family="Montserrat,sans-serif" font-size="5.5" fill="rgba(201,169,110,0.55)" font-weight="200">Bogotá</text>
+        <!-- Brasília -->
+        <circle cx="263" cy="190" r="3" fill="rgba(201,169,110,0.5)"/>
+        <circle cx="263" cy="190" r="6" fill="none" stroke="rgba(201,169,110,0.2)" stroke-width="0.8"/>
+        <text x="270" y="189" font-family="Montserrat,sans-serif" font-size="5.5" fill="rgba(201,169,110,0.55)" font-weight="200">Brasília</text>
+        <!-- Connection lines -->
+        <line x1="195" y1="168" x2="215" y2="185" stroke="rgba(201,169,110,0.12)" stroke-width="0.5" stroke-dasharray="3 4"/>
+        <line x1="195" y1="168" x2="188" y2="130" stroke="rgba(201,169,110,0.12)" stroke-width="0.5" stroke-dasharray="3 4"/>
+        <line x1="195" y1="168" x2="196" y2="112" stroke="rgba(201,169,110,0.12)" stroke-width="0.5" stroke-dasharray="3 4"/>
+        <line x1="195" y1="168" x2="263" y2="190" stroke="rgba(201,169,110,0.12)" stroke-width="0.5" stroke-dasharray="3 4"/>
+        <!-- Title -->
+        <text x="360" y="30" font-family="Cormorant Garamond,serif" font-size="11" fill="rgba(201,169,110,0.3)" font-style="italic">Our presence across</text>
+        <text x="360" y="45" font-family="Cormorant Garamond,serif" font-size="11" fill="rgba(201,169,110,0.3)" font-style="italic">Latin America</text>
+        <!-- Legend -->
+        <circle cx="360" cy="65" r="3" fill="var(--gold)" opacity="0.8"/>
+        <text x="368" y="68" font-family="Montserrat,sans-serif" font-size="7" fill="rgba(201,169,110,0.5)" font-weight="200">Headquarters</text>
+        <circle cx="360" cy="82" r="2.5" fill="rgba(201,169,110,0.5)"/>
+        <text x="368" y="85" font-family="Montserrat,sans-serif" font-size="7" fill="rgba(201,169,110,0.4)" font-weight="200">Field Office</text>
+      </svg>
+    </div>
+
+    <!-- DONATE -->
+    <div class="donate-block">
+      <p class="info-label">Support Our Work</p>
+      <p class="donate-subtitle">Your donation directly funds field operations, community partnerships, and ecosystem restoration. Every amount makes a difference.</p>
+      <div class="donate-amounts">
+        <button class="donate-amount" onclick="selectAmount(this)">$25</button>
+        <button class="donate-amount active" onclick="selectAmount(this)">$50</button>
+        <button class="donate-amount" onclick="selectAmount(this)">$100</button>
+        <button class="donate-amount" onclick="selectAmount(this)">$250</button>
+        <button class="donate-amount" onclick="selectAmount(this)">$500</button>
+        <button class="donate-amount" onclick="selectAmount(this)">$1,000</button>
+      </div>
+      <input class="donate-custom" type="text" placeholder="Or enter a custom amount (USD)">
+      <button class="donate-btn">Donate Securely →</button>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-brand-wrap">
+        <div class="nav-logo-mark" style="width:46px;height:46px;">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 3L11 19M3 11L19 11M5.5 5.5L16.5 16.5M16.5 5.5L5.5 16.5" stroke="#c9a96e" stroke-width="1" stroke-linecap="round" opacity="0.6"/><circle cx="11" cy="11" r="4" stroke="#c9a96e" stroke-width="0.8" opacity="0.4"/></svg>
+        </div>
+        <span class="f-logo">TAMPU <span>·</span> Project</span>
+      </div>
+      <p>Dedicated to preserving ecosystems and ancestral knowledge across Latin America.</p>
+      <div class="footer-social"><a href="#" class="soc">ig</a><a href="#" class="soc">fb</a><a href="#" class="soc">yt</a><a href="#" class="soc">in</a></div>
+    </div>
+    <div class="footer-col"><h4>Navigation</h4><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About Us</a></li><li><a href="projects.html">Projects</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Projects</h4><ul><li><a href="projects.html">Green Corridor</a></li><li><a href="projects.html">Ancestral Seeds</a></li><li><a href="projects.html">Forest Guardians</a></li><li><a href="projects.html">Living Water</a></li></ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul><li><a href="mailto:hello@tampu.org">hello@tampu.org</a></li><li><a href="#">+51 999 000 111</a></li><li><a href="#">Lima, Peru</a></li><li><a href="#">Newsletter</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 TAMPU Project · All rights reserved · Made with <span>♥</span> for the earth</p>
+    <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Cookies</a></div>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+  let navOpen = false;
+  function toggleNav(){navOpen=!navOpen;document.getElementById('burgerBtn').classList.toggle('open',navOpen);document.getElementById('navOverlay').classList.toggle('open',navOpen);document.body.style.overflow=navOpen?'hidden':'';}
+  function closeNav(){navOpen=false;document.getElementById('burgerBtn').classList.remove('open');document.getElementById('navOverlay').classList.remove('open');document.body.style.overflow='';}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeNav();});
+  function submitForm(){
+    document.getElementById('contactForm').style.display='none';
+    document.getElementById('formSuccess').style.display='block';
+  }
+  function selectAmount(el){
+    document.querySelectorAll('.donate-amount').forEach(b=>b.classList.remove('active'));
+    el.classList.add('active');
+  }
+</script>
+</body>
+</html>
